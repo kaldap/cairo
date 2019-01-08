@@ -708,6 +708,10 @@ CAIRO_ENABLE_SURFACE_BACKEND(xml, xml, no, [
     use_xml=$have_libz
     xml_NONPKGCONFIG_LIBS=-lz
 ])
+CAIRO_ENABLE_SURFACE_BACKEND(callback, callback, no, [
+    use_callback=$have_libz
+    callback_NONPKGCONFIG_LIBS=-lz
+])
 
 dnl ===========================================================================
 

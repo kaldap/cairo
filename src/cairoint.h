@@ -73,10 +73,11 @@
 #include "cairo-compiler-private.h"
 #include "cairo-error-private.h"
 
-#if CAIRO_HAS_PDF_SURFACE    || \
-    CAIRO_HAS_PS_SURFACE     || \
-    CAIRO_HAS_SCRIPT_SURFACE || \
-    CAIRO_HAS_XML_SURFACE
+#if CAIRO_HAS_PDF_SURFACE      || \
+    CAIRO_HAS_PS_SURFACE       || \
+    CAIRO_HAS_SCRIPT_SURFACE   || \
+    CAIRO_HAS_XML_SURFACE      || \
+    CAIRO_HAS_CALLBACK_SURFACE
 #define CAIRO_HAS_DEFLATE_STREAM 1
 #endif
 
