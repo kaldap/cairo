@@ -403,6 +403,7 @@ cairo_gobject_surface_type_get_type (void)
           { CAIRO_SURFACE_TYPE_TEE, "CAIRO_SURFACE_TYPE_TEE", "tee" },
           { CAIRO_SURFACE_TYPE_XML, "CAIRO_SURFACE_TYPE_XML", "xml" },
           { CAIRO_SURFACE_TYPE_SKIA, "CAIRO_SURFACE_TYPE_SKIA", "skia" },
+		  { CAIRO_SURFACE_TYPE_CALLBACK, "CAIRO_SURFACE_TYPE_CALLBACK", "callback" },
           { 0, NULL, NULL }
       };
       GType type = g_enum_register_static (g_intern_static_string ("cairo_surface_type_t"), values);
