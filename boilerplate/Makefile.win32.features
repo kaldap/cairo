@@ -464,6 +464,18 @@ enabled_cairo_boilerplate_cxx_sources += $(cairo_boilerplate_xml_cxx_sources)
 enabled_cairo_boilerplate_sources += $(cairo_boilerplate_xml_sources)
 endif
 
+unsupported_cairo_boilerplate_headers += $(cairo_boilerplate_callback_headers)
+all_cairo_boilerplate_headers += $(cairo_boilerplate_callback_headers)
+all_cairo_boilerplate_private += $(cairo_boilerplate_callback_private)
+all_cairo_boilerplate_cxx_sources += $(cairo_boilerplate_callback_cxx_sources)
+all_cairo_boilerplate_sources += $(cairo_boilerplate_callback_sources)
+ifeq ($(CAIRO_HAS_CALLBACK_SURFACE),1)
+enabled_cairo_boilerplate_headers += $(cairo_boilerplate_callback_headers)
+enabled_cairo_boilerplate_private += $(cairo_boilerplate_callback_private)
+enabled_cairo_boilerplate_cxx_sources += $(cairo_boilerplate_callback_cxx_sources)
+enabled_cairo_boilerplate_sources += $(cairo_boilerplate_callback_sources)
+endif
+
 supported_cairo_boilerplate_headers += $(cairo_boilerplate_user_headers)
 all_cairo_boilerplate_headers += $(cairo_boilerplate_user_headers)
 all_cairo_boilerplate_private += $(cairo_boilerplate_user_private)

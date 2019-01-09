@@ -80,7 +80,8 @@ _cairo_callback_move_to (void *closure,
 		return CAIRO_STATUS_NO_MEMORY;
 	
 	path->node_type = CAIRO_PATH_NODE_MOVE_TO;
-	path->points[0] = *p1;
+	path->points[0].x = _cairo_fixed_to_double (p1->x);
+	path->points[0].y = _cairo_fixed_to_double (p1->y);
 	path->next = NULL;
 	
 	if (((struct _path_iterator *)closure)->prev != NULL)
@@ -101,7 +102,8 @@ _cairo_callback_line_to (void *closure,
 		return CAIRO_STATUS_NO_MEMORY;
 	
 	path->node_type = CAIRO_PATH_NODE_LINE_TO;
-	path->points[0] = *p1;
+	path->points[0].x = _cairo_fixed_to_double (p1->x);
+	path->points[0].y = _cairo_fixed_to_double (p1->y);
 	path->next = NULL;
 	
 	if (((struct _path_iterator *)closure)->prev != NULL)
@@ -124,9 +126,12 @@ _cairo_callback_curve_to (void *closure,
 		return CAIRO_STATUS_NO_MEMORY;
 	
 	path->node_type = CAIRO_PATH_NODE_CURVE_TO;
-	path->points[0] = *p1;
-	path->points[1] = *p2;
-	path->points[2] = *p3;
+	path->points[0].x = _cairo_fixed_to_double (p1->x);
+	path->points[0].y = _cairo_fixed_to_double (p1->y);
+	path->points[1].x = _cairo_fixed_to_double (p2->x);
+	path->points[1].y = _cairo_fixed_to_double (p2->y);
+	path->points[2].x = _cairo_fixed_to_double (p3->x);
+	path->points[2].y = _cairo_fixed_to_double (p3->y);
 	path->next = NULL;
 	
 	if (((struct _path_iterator *)closure)->prev != NULL)
@@ -181,9 +186,9 @@ _cairo_callback_generate_path (const cairo_path_fixed_t * path)
 					&it);
 	
 	if (status == CAIRO_STATUS_SUCCESS)
-		return it->first;
+		return it.first;
 
-	_cairo_callback_destroy_path(it->first);
+	_cairo_callback_destroy_path(it.first);
 	assert (status == CAIRO_STATUS_SUCCESS); // Just to fail
 	return NULL;
 }
@@ -218,10 +223,10 @@ _cairo_callback_surface_paint (void			*abstract_surface,
 		return CAIRO_INT_STATUS_SUCCESS;
 	
 	paint.op = op;
-	paint.source = source_pat;
+	paint.source = source;
 	paint.clip = NULL; /* ToDo: Clipping */
 	
-	surface->iface.paint(surface, &paint);
+	surface->iface.paint((const cairo_surface_t *)surface, &paint);
 	return CAIRO_INT_STATUS_SUCCESS;
 }
 
@@ -243,7 +248,7 @@ _cairo_callback_surface_mask (void * abstract_surface,
 	mask.mask = mask_pat;
 	mask.clip = NULL; /* ToDo: Clipping */
 	
-	surface->iface.mask(surface, &mask);
+	surface->iface.mask((const cairo_surface_t *)surface, &mask);
 	return CAIRO_INT_STATUS_SUCCESS;
 }
 
@@ -281,7 +286,6 @@ _cairo_callback_surface_stroke (void				*abstract_surface,
 	
 	stroke.tolerance = tolerance;
 	stroke.op = op;
-	stroke.fill_rule = fill_rule;
 	stroke.antialias = antialias;
 	stroke.pattern = source;
 	stroke.path = _cairo_callback_generate_path(path);	
@@ -289,10 +293,10 @@ _cairo_callback_surface_stroke (void				*abstract_surface,
 	stroke.inv_matrix = ctm_inverse;
 	stroke.clip = NULL; /* ToDo: Clipping */
 		
-	surface->iface.stroke(surface, &stroke);
+	surface->iface.stroke((const cairo_surface_t *)surface, &stroke);
 	
 	if (stroke.path != NULL)
-		_cairo_callback_destroy_path(stroke.path);
+		_cairo_callback_destroy_path((cairo_callback_path_t *)stroke.path);
 	
 	if (stroke.style.dash != NULL)
 		free(stroke.style.dash);
@@ -325,10 +329,10 @@ _cairo_callback_surface_fill_int (cairo_callback_surface_t *surface,
 	fill.glyph = glyph;
 	fill.clip = NULL; /* ToDo: Clipping */
 	
-	surface->iface.fill(surface, &fill);
+	surface->iface.fill((const cairo_surface_t *)surface, &fill);
 	
 	if (fill.path != NULL)
-		_cairo_callback_destroy_path(fill.path);
+		_cairo_callback_destroy_path((cairo_callback_path_t *)fill.path);
 	
 	return CAIRO_INT_STATUS_SUCCESS;
 }
@@ -414,16 +418,16 @@ _cairo_callback_surface_glyphs (void			    *abstract_surface,
     cairo_int_status_t status = CAIRO_INT_STATUS_SUCCESS;
     int i;
 	   
-	_cairo_scaled_font_freeze_cache (font_subset->scaled_font);
+	_cairo_scaled_font_freeze_cache (scaled_font);
     for (i = 0; i < num_glyphs; i++) {
-	    status = _cairo_callback_surface_emit_outline_glyph (surface, scaled_font, &glyphs[i], source, clip, op);							  
+	    status = _cairo_callback_surface_emit_outline_glyph (surface, scaled_font, &glyphs[i], op, clip, source);							  
 		if (status == CAIRO_INT_STATUS_UNSUPPORTED)
-			status = _cairo_callback_surface_emit_bitmap_glyph (surface, scaled_font, &glyphs[i], source, clip, op);
+			status = _cairo_callback_surface_emit_bitmap_glyph (surface, scaled_font, &glyphs[i], op, clip, source);
 		
 		if (unlikely (status))
 			break;
     }
-	_cairo_scaled_font_thaw_cache (font_subset->scaled_font);
+	_cairo_scaled_font_thaw_cache (scaled_font);
 
     return status;
 }

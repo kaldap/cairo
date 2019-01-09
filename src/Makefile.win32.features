@@ -598,7 +598,7 @@ ifeq ($(CAIRO_HAS_XML_SURFACE),1)
 enabled_cairo_pkgconf += cairo-xml.pc
 endif
 
-supported_cairo_headers += $(cairo_callback_headers)
+unsupported_cairo_headers += $(cairo_callback_headers)
 all_cairo_headers += $(cairo_callback_headers)
 all_cairo_private += $(cairo_callback_private)
 all_cairo_cxx_sources += $(cairo_callback_cxx_sources)

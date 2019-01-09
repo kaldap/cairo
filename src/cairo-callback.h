@@ -49,9 +49,14 @@ typedef enum _cairo_callback_path_node {
 	CAIRO_PATH_NODE_CLOSE_PATH,
 } cairo_callback_path_node_t;
 
+typedef struct _cairo_callback_point {
+    double x;
+    double y;
+} cairo_callback_point_t;
+
 typedef struct _cairo_callback_path {
 	cairo_callback_path_node_t node_type;
-	cairo_point_t  points[3];
+	cairo_callback_point_t  points[3];
 	struct _cairo_callback_path * next;
 } cairo_callback_path_t;
 
@@ -81,7 +86,7 @@ typedef struct _cairo_callback_stroke_style {
     cairo_line_cap_t line_cap;
     cairo_line_join_t line_join;
     double miter_limit;
-    const double * dash;
+    double * dash;
     unsigned int num_dashes;
     double dash_offset;
 } cairo_callback_stroke_style_t;
